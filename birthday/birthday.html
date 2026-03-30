@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Happy Birthday 🎉</title>
+    <link rel="stylesheet" href="birth.css">
+</head>
+<body>
+
+
+<canvas id="fireworks"></canvas>
+
+<a href="birthdaypatch.html" class="btn">Click Me 🎁</a>
+<script>
+const canvas = document.getElementById("fireworks");
+const ctx = canvas.getContext("2d");
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+// TWO-LINE TEXT
+const lines = ["I LOVE YOU", "FATHIA OLAWUNMI MUSILIU"]; // <-- Change to your two lines
+
+const textCanvas = document.createElement("canvas");
+const textCtx = textCanvas.getContext("2d");
+
+textCanvas.width = canvas.width;
+textCanvas.height = canvas.height;
+
+textCtx.fillStyle = "white";
+textCtx.font = "bold 80px Arial";
+textCtx.textAlign = "center";
+textCtx.textBaseline = "middle";
+
+// Calculate vertical positioning
+const lineHeight = 100; // space between lines
+const startY = canvas.height / 2 - (lines.length - 1) * lineHeight / 2;
+
+lines.forEach((line, i) => {
+    textCtx.fillText(line, canvas.width / 2, startY + i * lineHeight);
+});
+
+const imageData = textCtx.getImageData(0, 0, canvas.width, canvas.height);
+const particles = [];
+
+// Generate particles
+for (let y = 0; y < canvas.height; y += 6) {
+    for (let x = 0; x < canvas.width; x += 6) {
+        const index = (y * canvas.width + x) * 4;
+        if (imageData.data[index + 3] > 128) {
+            particles.push({
+                x: Math.random() * canvas.width,
+                y: canvas.height,
+                targetX: x,
+                targetY: y,
+                size: 2,
+                color: `hsl(${Math.random()*360},100%,50%)`,
+                speed: Math.random() * 0.05 + 0.02
+            });
+        }
+    }
+}
+
+function animate() {
+    ctx.fillStyle = "rgba(0,0,0,0.2)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    particles.forEach(p => {
+        p.x += (p.targetX - p.x) * p.speed;
+        p.y += (p.targetY - p.y) * p.speed;
+
+        ctx.fillStyle = p.color;
+        ctx.fillRect(p.x, p.y, p.size, p.size);
+    });
+
+    requestAnimationFrame(animate);
+}
+
+animate();
+
+window.addEventListener("resize", () => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+});
+</script></body>
+</html>
